@@ -1,0 +1,312 @@
+<html>
+<body>
+
+<form action="poc2" method="get">
+<Br/>bookname<input type="text" name="whocares"/>
+<input type="submit" value="get"/>
+</form>
+
+
+<form action="poc1" method="post">
+<Br/>price<input type="text" name="whocares"/>
+<input type="submit" value="post"/>
+</form>
+
+<button id="b2"> submit</button>
+
+
+</body>
+
+<script src="jquery-3.5.1.min.js"></script>
+<script>//our scrip will come here
+
+
+$( 
+()=>{
+
+function getBookOnBookid(bookid){
+ 
+ 
+ for(let i=0; i < book.length;i++)
+	{
+	if(book[i].bookid == bookid)
+	{
+		output.bookidnotfoundstatus=true;
+		output.bookdetails=book[i];
+		break;	
+	
+	}
+		
+	}
+ 
+ 
+return output;
+
+
+}
+
+
+
+
+function updatebook(updatedObject)
+{
+let updated = false;
+for(let i=0; i < book.length;i++)
+	{
+	if(book[i].bookid == updatedObject.bookid)
+	{
+		book[i].price=updatedObject.price;
+		book[i].bookname=updatedObject.bookname;
+		updated=true;
+		break;
+	
+	}
+	}
+
+return updated;
+
+
+}
+
+function showContents()
+{
+  let ajaxparams={
+  data:{},
+  url: "http://localhost:900/getAllItems",
+  type:'get',
+  dataType: "json",
+  success:(dgbs)=>{ items = dgbs; 
+  
+    let bookcontents="";
+	for(let i=0; i < book.length;i++)
+	{
+	bookcontents += "<br/>" + book[i].bookid + "  " + book[i].bookname + " " + book[i].price;
+	}
+	$("#contents").html(bookcontents);
+
+  
+  
+  },
+  error:(error)=>{ console.log("failure " + error)}
+
+};
+$.ajax(ajaxparams);	
+	
+}
+
+
+$("#bookid").blur(()=>{
+
+
+let y=$("#bookid").val();
+
+
+
+document.querySelector("#bookid").disabled=true;
+
+let ajaxparams={
+  data:{ x:y},
+  url: "http://localhost:900/getItem",
+  type:'get',
+  dataType: "json",
+  success:(output)=>{ 
+
+    if(output.itemnofoundstatus)
+{
+
+
+$("#message").text("book details found");
+
+$("#bookname").val(output.bookdetails.bookname);
+
+document.querySelector("#bookname").value=
+output.bookdetails.bookname;
+
+
+$("#bookprice").val(output.bookdetails.price);
+
+
+
+
+
+
+}
+
+else
+{
+
+$("#message").text("book details not found");
+$("#bookname").val("");
+$("#bookprice").val("");
+
+
+
+
+
+
+
+}
+
+
+  },
+  error:(error)=>{ console.log("failure " + error)}
+
+};
+$.ajax(ajaxparams);
+
+
+
+});
+
+
+
+$("#add").click(
+	()=>{
+  
+ 
+  
+  let input={x:$("#bookno").val(),
+  y:$("#bookname").val(),z:$("#bookprice").val()};
+
+  let ajaxparams={
+  data:input,
+  url: "http://localhost:900/addItem",
+  type:'get',
+  dataType: "json",
+  success:(output)=>{ 
+
+
+    if(output)
+  {
+  
+  $("#message").text("added succesfully");
+   $("#message").removeClass("nm").addClass("em");
+  
+  }
+  else
+  
+  {
+ $("#message").text("could not add book");
+  
+  }
+
+  
+  
+  
+$("#bookname").val("");
+$("#price").val("");
+
+
+	showContents();
+
+  
+	
+	document.querySelector("#bookno").disabled=false;
+
+
+
+
+
+  },
+  error:(errr)=>{ console.log("failure" + errr);}
+  };
+  $.ajax(ajaxparams);
+
+
+}); 
+
+
+
+
+$("#update").click(()=>{
+
+
+let input ={itemno:$("#bookid").val(),
+  itemname:$("#bookname").val(),price:$("#price").val()};
+  
+  
+  let ajaxparams={
+    
+  data:input,
+  url: "http://localhost:900/updateitem",
+  type:'get',
+  dataType: "json",
+  success:(output)=>{
+
+    
+    if(output)
+  {
+  $("#message").text("updated successfully");
+  $("#message").removeClass("em").addClass("nm");
+  
+  }
+  else
+  
+  {
+  
+    $("#message").text("could not update book");
+  
+  
+  }
+  $("#bookname").val("");
+  $("#price").val("");
+
+	showContents();
+
+  document.querySelector("#bookid").disabled=false;
+  document.querySelector("#bookid").focus();
+  
+
+
+
+
+
+
+
+
+
+  },
+  error:(mistake)=> { console.log("error " + mistake);}
+   };
+   $.ajax(ajaxparams);
+
+
+
+
+
+  
+ 
+
+});
+
+showContents();
+
+
+});
+
+
+
+$(document).ready(function()
+{
+console.log("no more sins");
+$("#b2").click(function () 
+	{ 
+		//console.log("jquery works");
+		alert("jquery works")
+	});
+	
+});
+
+
+
+</script>
+
+<script src="temp.js"></script>
+
+
+
+
+
+
+</body>
+</html>
